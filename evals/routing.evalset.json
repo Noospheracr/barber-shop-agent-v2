@@ -1,0 +1,49 @@
+{
+  "_note": "Pragmatic pre-implementation format. In P1, convert to the current ADK evalset schema (adk eval) — fields map 1:1: query→user_content, expected_trajectory→intermediate_data.tool_uses/transfers, expected→final_response criteria. Scoring: trajectory must match in_order; response judged by LLM-as-judge rubric.",
+  "eval_set_id": "routing_v1",
+  "description": "ReceptionistAgent intent routing + language mirroring",
+  "cases": [
+    {
+      "eval_id": "route_booking_es",
+      "query": "Hola, quiero agendar un corte para el sábado",
+      "expected_trajectory": ["transfer_to_agent:booking"],
+      "expected": {"language": "es", "no_tools_besides": ["customer_lookup"]}
+    },
+    {
+      "eval_id": "route_booking_en",
+      "query": "Hey, can I book a haircut for Saturday morning?",
+      "expected_trajectory": ["transfer_to_agent:booking"],
+      "expected": {"language": "en"}
+    },
+    {
+      "eval_id": "route_consultation_photo",
+      "query": "Le mando una foto, ¿qué corte me quedaría bien?",
+      "expected_trajectory": ["transfer_to_agent:consultation"],
+      "expected": {"language": "es"}
+    },
+    {
+      "eval_id": "route_feedback",
+      "query": "Quería contarles que el corte del viernes quedó excelente",
+      "expected_trajectory": ["transfer_to_agent:followup"],
+      "expected": {"language": "es"}
+    },
+    {
+      "eval_id": "route_ambiguous_stays",
+      "query": "Buenas",
+      "expected_trajectory": [],
+      "expected": {"behavior": "greets in Spanish, offers booking/consultation/feedback, no transfer"}
+    },
+    {
+      "eval_id": "route_mixed_intent_priority",
+      "query": "Quiero ver estilos nuevos y de una vez agendar para el jueves",
+      "expected_trajectory": ["transfer_to_agent:consultation"],
+      "expected": {"behavior": "consultation first, booking handoff after confirm_style"}
+    },
+    {
+      "eval_id": "route_out_of_domain",
+      "query": "Can you write me a poem about the ocean?",
+      "expected_trajectory": [],
+      "expected": {"behavior": "politely declines, redirects to barbershop services, stays in persona"}
+    }
+  ]
+}

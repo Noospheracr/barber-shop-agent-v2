@@ -1,0 +1,78 @@
+# shop_profile.yaml — the ONLY place shop-specific data lives.
+# >>> MAX: fill every field marked TODO with the real shop's details. <<<
+# Everything downstream (agents, templates, specs, console) reads from here.
+
+shop:
+  name: "TODO — shop name"
+  tagline: "TODO — short brand line (optional)"
+  address: "TODO — street address, city"
+  maps_link: "TODO — Google Maps URL"
+  phone_display: "TODO — public shop phone, e.g. +506 XXXX XXXX"
+  timezone: "America/Costa_Rica"
+  default_language: "es"          # bilingual es/en, Spanish-first
+  brand_voice: >
+    TODO — 2-3 lines describing tone. Suggested default: cercano y respetuoso
+    (trato de "usted"), profesional pero con calidez de barrio; en inglés,
+    friendly neighborhood-barber tone. No emojis salvo en follow-ups.
+
+hours:                             # TODO — real opening hours (24h format)
+  monday:    {open: "09:00", close: "18:00"}
+  tuesday:   {open: "09:00", close: "18:00"}
+  wednesday: {open: "09:00", close: "18:00"}
+  thursday:  {open: "09:00", close: "18:00"}
+  friday:    {open: "09:00", close: "19:00"}
+  saturday:  {open: "08:00", close: "17:00"}
+  sunday:    closed
+
+barbers:                           # TODO — real roster
+  - id: barber_1
+    name: "TODO"
+    specialty: "TODO e.g. fades, classic cuts"
+  - id: barber_2
+    name: "TODO"
+    specialty: "TODO"
+
+services:                          # TODO — real menu with durations and prices (CRC)
+  - id: corte_clasico
+    name_es: "Corte clásico"
+    name_en: "Classic cut"
+    duration_min: 45
+    price_crc: 0                   # TODO
+    style_category_default: null   # set per-customer at service time
+  - id: fade
+    name_es: "Fade / degradado"
+    name_en: "Fade"
+    duration_min: 45
+    price_crc: 0                   # TODO
+  - id: barba
+    name_es: "Arreglo de barba"
+    name_en: "Beard trim"
+    duration_min: 30
+    price_crc: 0                   # TODO
+  - id: corte_y_barba
+    name_es: "Corte + barba"
+    name_en: "Cut + beard"
+    duration_min: 75
+    price_crc: 0                   # TODO
+  # TODO — add/remove services to match the real menu
+
+booking:
+  slot_granularity_min: 15
+  buffer_between_appointments_min: 5
+  max_advance_days: 30
+  cancellation_notice_min: 120     # 2h courtesy window
+
+retention:                         # the style-based recontact cadence
+  recontact_days:
+    short: 15                      # "sharpen-up" nudge
+    medium: 21
+    long: 21
+  selfie_discount_pct: 10          # TODO — confirm offer
+  quiet_hours: {start: "20:00", end: "08:00"}
+  max_marketing_msgs_per_cycle: 1
+
+comms:
+  reminder_offsets: ["-24h", "-2.5h"]
+  followup_offset: "+3h"
+  channels_enabled: [whatsapp, sms, email]
+  default_channel: whatsapp

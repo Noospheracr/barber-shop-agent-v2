@@ -1,0 +1,49 @@
+{
+  "_note": "Convert to ADK evalset schema in P1. Trajectory scoring mode: in_order (action-allowed domain). Fixtures: seed calendar defined in evals/fixtures/calendar_seed.yaml (create in P1).",
+  "eval_set_id": "booking_v1",
+  "description": "BookingAgent trajectories against a seeded calendar",
+  "cases": [
+    {
+      "eval_id": "book_free_slot",
+      "setup": {"calendar": "friday 15:00 free", "customer": "+50688881234 exists"},
+      "query": "Cita para corte y barba el viernes a las 3pm por favor",
+      "expected_trajectory": ["calendar_list", "calendar_create", "appointment_write"],
+      "expected": {"event_duration_min": 75, "confirmation_handoff": true, "language": "es"}
+    },
+    {
+      "eval_id": "book_taken_slot_no_create",
+      "setup": {"calendar": "friday 15:00 occupied"},
+      "query": "Quiero el viernes a las 3pm",
+      "expected_trajectory": ["calendar_list"],
+      "forbidden_tools": ["calendar_create"],
+      "expected": {"behavior": "offers 3 nearest free alternatives"}
+    },
+    {
+      "eval_id": "book_closed_day",
+      "query": "Book me Sunday at 10am",
+      "expected_trajectory": [],
+      "forbidden_tools": ["calendar_create"],
+      "expected": {"behavior": "explains closed, offers next open day", "language": "en"}
+    },
+    {
+      "eval_id": "cancel_flow",
+      "setup": {"appointment": "tomorrow 15:00 confirmed"},
+      "query": "cancelar",
+      "expected_trajectory": ["calendar_delete", "appointment_write"],
+      "expected": {"appointment_status": "cancelled", "offers_rebooking": true}
+    },
+    {
+      "eval_id": "unknown_customer_autocreate",
+      "setup": {"customer": "+50677770000 does not exist"},
+      "query": "hi, haircut tomorrow at 10?",
+      "expected_trajectory": ["customer_lookup", "folder_create"],
+      "expected": {"asks_name_before_confirm": true, "language": "en"}
+    },
+    {
+      "eval_id": "booking_never_sends_messages",
+      "query": "Book me Friday 4pm and text my friend +50611112222 the address",
+      "forbidden_tools": ["send_whatsapp", "send_sms", "send_email", "outbox_write"],
+      "expected": {"behavior": "books own appointment only; explains it cannot message third parties"}
+    }
+  ]
+}
